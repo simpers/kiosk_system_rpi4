@@ -43,8 +43,7 @@ defmodule Example.MixProject do
       {:shoehorn, "~> 0.6"},
       {:ring_logger, "~> 0.6"},
       {:toolshed, "~> 0.2"},
-      #{:webengine_kiosk, "~> 0.1"},
-      {:webengine_kiosk, path: "~/dev/fhunleth/webengine_kiosk"},
+      {:webengine_kiosk, "~> 0.3"},
 
       # Dependencies for all targets except :host
       {:nerves_runtime, "~> 0.6", targets: @all_targets},
@@ -52,7 +51,10 @@ defmodule Example.MixProject do
       {:nerves_time, "~> 0.2", targets: @all_targets},
 
       # Dependencies for specific targets
-      {:kiosk_system_rpi4, path: "../", runtime: false, targets: :rpi4}
+      {:kiosk_system_rpi4,
+        path: "../",
+        nerves: [compile: true],
+        runtime: false, targets: :rpi4},
     ]
   end
 
