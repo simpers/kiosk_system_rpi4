@@ -2,6 +2,8 @@ defmodule KioskSystemRpi4.MixProject do
   use Mix.Project
 
   @app :kiosk_system_rpi4
+  @github_organization "nerves-project"
+  @source_url "https://github.com/#{@github_organization}/#{@app}"
   @version Path.join(__DIR__, "VERSION")
            |> File.read!()
            |> String.trim()
@@ -18,7 +20,12 @@ defmodule KioskSystemRpi4.MixProject do
       package: package(),
       deps: deps(),
       aliases: [loadconfig: [&bootstrap/1], docs: ["docs", &copy_images/1]],
-      docs: [extras: ["README.md"], main: "readme"]
+      docs: docs(),
+      preferred_cli_env: %{
+        docs: :docs,
+        "hex.build": :docs,
+        "hex.publish": :docs
+      }
     ]
   end
 
@@ -36,7 +43,7 @@ defmodule KioskSystemRpi4.MixProject do
     [
       type: :system,
       artifact_sites: [
-        {:github_releases, "nerves-project/#{@app}"}
+        {:github_releases, "#{@github_organization}/#{@app}"}
       ],
       build_runner_opts: build_runner_opts(),
       platform: Nerves.System.BR,
@@ -49,11 +56,11 @@ defmodule KioskSystemRpi4.MixProject do
 
   defp deps do
     [
-      {:nerves, "~> 1.7", runtime: false},
+      {:nerves, "~> 1.5.4 or ~> 1.6.0 or ~> 1.7.0", runtime: false},
       {:nerves_system_br, "1.13.2", runtime: false},
-      {:nerves_toolchain_arm_unknown_linux_gnueabihf, "1.3.2", runtime: false},
-      {:nerves_system_linter, "~> 0.4", runtime: false},
-      {:ex_doc, "~> 0.18", only: [:dev, :test], runtime: false}
+      {:nerves_toolchain_arm_unknown_linux_gnueabihf, "~> 1.3.2", runtime: false},
+      {:nerves_system_linter, "~> 0.4", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.22", only: :docs, runtime: false},
     ]
   end
 
@@ -63,11 +70,21 @@ defmodule KioskSystemRpi4.MixProject do
     """
   end
 
+  defp docs do
+    [
+      extras: ["README.md", "CHANGELOG.md"],
+      main: "readme",
+      source_ref: "v#{@version}",
+      source_url: @source_url,
+      skip_undefined_reference_warnings_on: ["CHANGELOG.md"]
+    ]
+  end
+
   defp package do
     [
       files: package_files(),
       licenses: ["Apache 2.0"],
-      links: %{"GitHub" => "https://github.com/nerves-project/#{@app}"}
+      links: %{"GitHub" => @source_url}
     ]
   end
 
